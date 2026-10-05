@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#b3261e">
+<title>Canton Fair Ledger</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Canton Fair Ledger</h1>
+  <div id="ctx" class="ctx" title="Sticky booth: new scans/entries are filed here">
+    <label>Booth <input id="ctxBooth" placeholder="e.g. 9.1 K12" autocomplete="off"></label>
+    <label>Company <input id="ctxCompany" placeholder="company at this booth" autocomplete="off"></label>
+    <button id="ctxClear" class="ghost" type="button">Clear</button>
+  </div>
+</header>
+
+<main>
+  <section id="viewLedger">
+    <div class="bar">
+      <input id="search" type="search" placeholder="Search booth, company, product, contact…">
+      <select id="filterPhase"><option value="">All phases</option><option>1</option><option>2</option><option>3</option></select>
+      <select id="filterStar"><option value="">Any ★</option><option value="3">★3+</option><option value="4">★4+</option><option value="5">★5</option></select>
+    </div>
+    <div id="count" class="muted"></div>
+    <ul id="list" class="list"></ul>
+  </section>
+
+  <section id="viewMore" hidden>
+    <h2>Data</h2>
+    <div class="grid">
+      <button id="exCsv">Export CSV (Excel)</button>
+      <button id="exJson">Backup JSON</button>
+      <label class="btn">Import CSV / JSON<input id="imFile" type="file" accept=".csv,.json,application/json,text/csv" hidden></label>
+    </div>
+    <h2>Pre-load booth list</h2>
+    <p class="muted">Paste one per line: <code>booth, company</code> (comma or tab). Existing booth+company pairs are skipped.</p>
+    <textarea id="bulk" rows="6" placeholder="9.1 K12, Foshan Lamp Co.&#10;3.2 B05&#9;Ningbo Tools Ltd"></textarea>
+    <button id="bulkGo">Add to ledger</button>
+    <h2>Scanner</h2>
+    <label class="check"><input type="checkbox" id="optAuto"> Auto-save every scan (continuous mode, files under sticky booth)</label>
+    <h2>Danger zone</h2>
+    <button id="wipe" class="danger">Delete all data</button>
+    <p class="muted">Everything is stored on this phone only (IndexedDB). Export a backup regularly — clearing browser data erases it.</p>
+  </section>
+</main>
+
+<nav>
+  <button data-tab="ledger" class="on">📒 Ledger</button>
+  <button id="btnScan" class="primary">▣ Scan QR</button>
+  <button id="btnAdd">＋ Add</button>
+  <button data-tab="more">⚙ More</button>
+</nav>
+
+<div id="scanner" class="overlay" hidden>
+  <video id="video" playsinline muted></video>
+  <div class="reticle"></div>
+  <div id="scanMsg" class="scanMsg">Point at a QR code</div>
+  <div class="scanBar">
+    <label class="btn">📷 Photo / image<input id="scanImg" type="file" accept="image/*" capture="environment" hidden></label>
+    <label class="check inv"><input type="checkbox" id="scanAuto"> Auto-save</label>
+    <button id="scanClose">Close</button>
+  </div>
+</div>
+
+<div id="editor" class="overlay sheet" hidden>
+  <form id="form" autocomplete="off">
+    <div class="formHead"><strong id="formTitle">New entry</strong><span id="formKind" class="muted"></span></div>
+    <div class="row2">
+      <label>Booth *<input name="booth" required></label>
+      <label>Phase<select name="phase"><option value=""></option><option>1</option><option>2</option><option>3</option></select></label>
+    </div>
+    <label>Company *<input name="company" required></label>
+    <div class="row2">
+      <label>Contact<input name="contact"></label>
+      <label>Title<input name="title"></label>
+    </div>
+    <div class="row2">
+      <label>Phone<input name="phone" type="tel"></label>
+      <label>Email<input name="email" type="email"></label>
+    </div>
+    <div class="row2">
+      <label>WeChat<input name="wechat"></label>
+      <label>WhatsApp<input name="whatsapp"></label>
+    </div>
+    <label>Website<input name="website"></label>
+    <label>Address<input name="address"></label>
+    <label>Products<input name="products" placeholder="what they make / sell"></label>
+    <div class="row2">
+      <label>Category<input name="category"></label>
+      <label>Follow-up<select name="followup"><option value=""></option><option>Order</option><option>Samples</option><option>Quote</option><option>Call back</option><option>Dropped</option></select></label>
+    </div>
+    <label>Rating<div id="stars" class="stars"></div><input name="rating" type="hidden"></label>
+    <label>Notes<textarea name="notes" rows="3" placeholder="prices, MOQ, impressions…"></textarea></label>
+    <div class="photoRow">
+      <img id="photoPrev" alt="" hidden>
+      <label class="btn">📷 Card / booth photo<input id="photoIn" type="file" accept="image/*" capture="environment" hidden></label>
+      <button type="button" id="photoDel" class="ghost" hidden>Remove photo</button>
+    </div>
+    <div class="actions">
+      <button type="button" id="formDel" class="danger" hidden>Delete</button>
+      <span class="spacer"></span>
+      <button type="button" id="formCancel">Cancel</button>
+      <button type="submit" class="primary" id="formSave">Save</button>
+      <button type="button" id="formSaveScan" class="primary" hidden>Save &amp; scan next</button>
+    </div>
+  </form>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+<script src="vendor/jsQR.js"></script>
+<script src="parse.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

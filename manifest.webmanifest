@@ -1,0 +1,9 @@
+{
+  "name": "Canton Fair Ledger",
+  "short_name": "CF Ledger",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#b3261e",
+  "icons": [{ "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}
