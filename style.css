@@ -45,3 +45,6 @@ nav button{flex:1;padding:12px 4px}nav button.on{border-color:var(--red)}
 .toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:20px;z-index:30;font-size:14px;max-width:90vw}
 textarea{resize:vertical}code{background:var(--card);padding:1px 4px;border-radius:4px}
 [hidden]{display:none!important}
+.sortbar{margin-top:6px}.sortbar select{flex:1;width:auto}.sortbar button{white-space:nowrap}
+.grp{position:sticky;top:96px;z-index:2;margin:10px 0 6px;padding:3px 8px;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--mut);background:var(--bg);border-bottom:2px solid var(--red)}
+details{margin-top:10px;border-top:1px solid var(--line);padding-top:6px}summary{cursor:pointer;padding:8px 0;color:var(--red);font-weight:600}

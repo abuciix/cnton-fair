@@ -46,25 +46,40 @@
   $('#scanAuto').onchange = e => setAuto(e.target.checked);
   setAuto(autoSave);
 
+  // ---------- sorting ----------
+  const cmp = (x, y) => String(x || '').localeCompare(String(y || ''), undefined, { numeric: true, sensitivity: 'base' });
+  function sorter() {
+    const s = $('#sortBy').value;
+    if (s === 'company') return (a, b) => cmp(a.company, b.company) || cmp(a.booth, b.booth);
+    if (s === 'recent') return (a, b) => (b.updated || '').localeCompare(a.updated || '');
+    return (a, b) => cmp(a.booth, b.booth) || cmp(a.company, b.company);
+  }
+  try { $('#sortBy').value = localStorage.getItem('cf-sort') || 'booth'; } catch (e) { }
+  $('#sortBy').addEventListener('change', () => { try { localStorage.setItem('cf-sort', $('#sortBy').value); } catch (e) { } });
+
   // ---------- ledger list ----------
   function render() {
     const q = norm($('#search').value), ph = $('#filterPhase').value, st = +$('#filterStar').value || 0;
     const rows = entries.filter(e =>
       (!ph || e.phase === ph) && (!st || (+e.rating || 0) >= st) &&
       (!q || norm(COLS.slice(0, 16).map(c => e[c]).join(' ')).includes(q)))
-      .sort((a, b) => (b.updated || '').localeCompare(a.updated || ''));
+      .sort(sorter());
     const booths = new Set(entries.map(e => e.booth)).size;
     $('#count').textContent = `${rows.length} shown · ${entries.length} entries · ${booths} booths`;
-    $('#list').innerHTML = rows.map(e => `<li class="item" data-id="${esc(e.id)}">
+    const sort = $('#sortBy').value;
+    const groupOf = e => sort === 'booth' ? 'Hall ' + (String(e.booth).trim().match(/^\d+/) || ['?'])[0]
+      : sort === 'company' ? ((String(e.company).trim()[0] || '#').toUpperCase().replace(/[^A-Z\u4e00-\u9fff]/, '#')) : '';
+    let lastG = null;
+    $('#list').innerHTML = rows.map(e => { const g = groupOf(e), head = g !== lastG && g ? `<li class="grp">${esc(g)}</li>` : ''; lastG = g; return head + `<li class="item" data-id="${esc(e.id)}">
       ${e.photo ? `<img src="${e.photo}" alt="">` : ''}
       <div class="b">${esc(e.booth)}</div>
       <div class="t"><div class="c">${esc(e.company)}${e.phase ? `<span class="tag">P${esc(e.phase)}</span>` : ''}${e.followup ? `<span class="tag">${esc(e.followup)}</span>` : ''}</div>
       <div class="s">${esc([e.contact, e.title, e.phone || e.email || e.wechat].filter(Boolean).join(' · '))}</div>
-      <div class="s">${'★'.repeat(+e.rating || 0)} ${esc(e.products || e.notes || '')}</div></div></li>`).join('');
+      <div class="s">${'★'.repeat(+e.rating || 0)} ${esc(e.products || e.notes || '')}</div></div></li>`; }).join('');
   }
   async function reload() { entries = await dbAll(); render(); }
   $('#list').onclick = ev => { const li = ev.target.closest('.item'); if (li) openEditor(entries.find(e => e.id === li.dataset.id)); };
-  ['#search', '#filterPhase', '#filterStar'].forEach(s => $(s).addEventListener('input', render));
+  ['#search', '#filterPhase', '#filterStar', '#sortBy'].forEach(s => $(s).addEventListener('input', render));
 
   // ---------- tabs ----------
   function tab(name) {
@@ -258,10 +273,12 @@
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   }
   const stamp = () => new Date().toISOString().slice(0, 10);
-  $('#exCsv').onclick = () => {
-    const rows = [COLS.join(',')].concat(entries.slice().sort((a, b) => String(a.booth).localeCompare(String(b.booth), undefined, { numeric: true })).map(e => COLS.map(c => csvCell(e[c])).join(',')));
+  const exportCsv = () => {
+    const rows = [COLS.join(',')].concat(entries.slice().sort(sorter()).map(e => COLS.map(c => csvCell(e[c])).join(',')));
     download(`canton-ledger-${stamp()}.csv`, '﻿' + rows.join('\r\n'), 'text/csv;charset=utf-8');
+    toast(`Exported ${entries.length} entries`);
   };
+  $('#exCsv').onclick = $('#exCsvTop').onclick = exportCsv;
   $('#exJson').onclick = () => download(`canton-ledger-${stamp()}.json`, JSON.stringify(entries, null, 1), 'application/json');
   function parseCSV(t) {
     const rows = []; let row = [], cur = '', q = false;

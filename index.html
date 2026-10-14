@@ -26,6 +26,10 @@
       <select id="filterPhase"><option value="">All phases</option><option>1</option><option>2</option><option>3</option></select>
       <select id="filterStar"><option value="">Any ★</option><option value="3">★3+</option><option value="4">★4+</option><option value="5">★5</option></select>
     </div>
+    <div class="bar sortbar">
+      <select id="sortBy" aria-label="Sort"><option value="booth">Sort: Booth number</option><option value="company">Sort: Company A–Z</option><option value="recent">Sort: Newest first</option></select>
+      <button id="exCsvTop" type="button">⬇ Export all (CSV)</button>
+    </div>
     <div id="count" class="muted"></div>
     <ul id="list" class="list"></ul>
   </section>
@@ -33,7 +37,7 @@
   <section id="viewMore" hidden>
     <h2>Data</h2>
     <div class="grid">
-      <button id="exCsv">Export CSV (Excel)</button>
+      <button id="exCsv">Export all (CSV for Excel)</button>
       <button id="exJson">Backup JSON</button>
       <label class="btn">Import CSV / JSON<input id="imFile" type="file" accept=".csv,.json,application/json,text/csv" hidden></label>
     </div>
@@ -75,27 +79,28 @@
       <label>Phase<select name="phase"><option value=""></option><option>1</option><option>2</option><option>3</option></select></label>
     </div>
     <label>Company *<input name="company" required></label>
-    <div class="row2">
-      <label>Contact<input name="contact"></label>
-      <label>Title<input name="title"></label>
-    </div>
-    <div class="row2">
-      <label>Phone<input name="phone" type="tel"></label>
-      <label>Email<input name="email" type="email"></label>
-    </div>
-    <div class="row2">
-      <label>WeChat<input name="wechat"></label>
-      <label>WhatsApp<input name="whatsapp"></label>
-    </div>
-    <label>Website<input name="website"></label>
-    <label>Address<input name="address"></label>
+    <label>Contact person<input name="contact"></label>
     <label>Products<input name="products" placeholder="what they make / sell"></label>
-    <div class="row2">
-      <label>Category<input name="category"></label>
-      <label>Follow-up<select name="followup"><option value=""></option><option>Order</option><option>Samples</option><option>Quote</option><option>Call back</option><option>Dropped</option></select></label>
-    </div>
+    <label>Phone<input name="phone" type="tel"></label>
     <label>Rating<div id="stars" class="stars"></div><input name="rating" type="hidden"></label>
     <label>Notes<textarea name="notes" rows="3" placeholder="prices, MOQ, impressions…"></textarea></label>
+    <details>
+      <summary>More details</summary>
+      <div class="row2">
+        <label>Email<input name="email" type="email"></label>
+        <label>Title<input name="title"></label>
+      </div>
+      <div class="row2">
+        <label>WeChat<input name="wechat"></label>
+        <label>WhatsApp<input name="whatsapp"></label>
+      </div>
+      <label>Website<input name="website"></label>
+      <label>Address<input name="address"></label>
+      <div class="row2">
+        <label>Category<input name="category"></label>
+        <label>Follow-up<select name="followup"><option value=""></option><option>Order</option><option>Samples</option><option>Quote</option><option>Call back</option><option>Dropped</option></select></label>
+      </div>
+    </details>
     <div class="photoRow">
       <img id="photoPrev" alt="" hidden>
       <label class="btn">📷 Card / booth photo<input id="photoIn" type="file" accept="image/*" capture="environment" hidden></label>
