@@ -21,3 +21,8 @@ Back up regularly (More → Backup JSON / Export CSV); clearing browser data era
 
 ## Files
 `index.html`, `style.css`, `app.js` (UI/storage/scanner), `parse.js` (QR payload parser), `sw.js` + `manifest.webmanifest` (offline/PWA), `vendor/jsQR.js` (Apache-2.0 QR decoder; the native `BarcodeDetector` is used first when available).
+
+## Tests
+- `node tests/parse.test.js` – QR payload parser (no dependencies).
+- `node tests/e2e.test.js` – full app flow in headless Chromium (scan from image, merge, auto-save, persistence, sort, CSV/JSON round-trip, delete). Needs `playwright-core` and `qrcode` on `NODE_PATH`.
+- `node tests/camera.test.js <video.y4m>` – live-camera scanning using Chromium's fake camera fed with a QR video.
