@@ -12,12 +12,18 @@ Offline phone web-app for logging booths and companies at the Canton Fair. Scan 
 - **Export** CSV (opens in Excel, UTF-8 w/ Chinese) and JSON backup.
 - Works fully offline; data lives on the phone (IndexedDB). No external servers or CDNs (important in China).
 
-## Using it on your phone
-Live camera scanning requires HTTPS (or localhost). Options:
-1. Host these static files anywhere with HTTPS (GitHub Pages, Netlify, Vercel — **load it once before you fly; the service worker then caches it for offline use**). Then "Add to Home Screen".
-2. Without hosting, open `index.html` directly: live camera won't start, but the **📷 Photo / image** button decodes a QR from a photo and works fine.
+## Using it on your phone (no hosting): `dist/canton-ledger.html`
+This is the whole app in one file (`node build.js` regenerates it).
+1. Send the file to your phone (email, WeChat file transfer, USB, cloud drive) and save it to the phone's storage.
+2. Open it in **Chrome (Android)**. Bookmark it or use ⋮ → Add to Home screen.
+3. Tap **Scan QR → 📷 Photo / image**: the phone's camera app opens, take a picture of the QR code and the form fills in. (Live video scanning needs HTTPS and is not available when opened as a file.)
 
-Back up regularly (More → Backup JSON / Export CSV); clearing browser data erases the ledger.
+Notes
+- Data is stored per file location. Always open the same file from the same place; a moved or re-downloaded copy starts with an empty ledger.
+- iPhone Safari has trouble opening local HTML files; Android Chrome is recommended.
+- Export a CSV/JSON backup every day (More tab).
+
+With HTTPS hosting (optional), serve the repo root; the service worker then caches everything for offline use and live camera scanning works.
 
 ## Files
 `index.html`, `style.css`, `app.js` (UI/storage/scanner), `parse.js` (QR payload parser), `sw.js` + `manifest.webmanifest` (offline/PWA), `vendor/jsQR.js` (Apache-2.0 QR decoder; the native `BarcodeDetector` is used first when available).
